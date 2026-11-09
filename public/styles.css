@@ -1,0 +1,93 @@
+:root { color-scheme: light; }
+body { margin: 8px; }
+main {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: .5rem 1rem;
+  min-height: calc(100dvh - 16px);
+}
+h2, h3 { margin: 0; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1rem; }
+.connection p, .rocket-info p { margin: .25rem 0; }
+summary { cursor: pointer; }
+
+.address, .controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .35rem 1rem;
+}
+.address { margin-block: .5rem; }
+code { overflow-wrap: anywhere; }
+.readout output { font-variant-numeric: tabular-nums; }
+
+#rocket-view {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 3fr);
+  grid-template-areas: "rocket-info stage";
+  gap: .25rem .75rem;
+}
+.rocket-info { grid-area: rocket-info; align-self: center; }
+.rocket-info .controls { gap: .25rem; font-size: .875rem; }
+.rocket-live-state { font-size: .875rem; }
+.rocket-stage { grid-area: stage; min-height: clamp(6rem, 15dvh, 15rem); }
+.rocket-stage:empty { display: none; }
+.rocket-stage, .chart-wrap { position: relative; }
+canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+
+.telemetry, .telemetry section, #motion-panels, #environment-panels {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+.telemetry section, #motion-panels, #environment-panels, .sensor-panel { flex: 1 0 auto; }
+.sensor-panel {
+  display: grid;
+  grid-template-columns: clamp(7rem, 41%, 13rem) minmax(0, 1fr);
+  align-items: center;
+  gap: .5rem;
+}
+.sensor-label p { margin: .125rem 0; font-size: .875rem; line-height: 1.15; }
+.values { gap: .125rem .35rem; font-size: .8125rem; line-height: 1.15; }
+.sensor-rate, .readout { white-space: nowrap; }
+#motion-panels output { display: inline-block; min-width: 5.5ch; }
+.sensor-plot {
+  display: grid;
+  grid-template-rows: minmax(2.25rem, 1fr) auto;
+  align-self: stretch;
+}
+
+.diagnostics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: .5rem 1rem;
+}
+.diagnostics dd { margin: 0; }
+.chart-time {
+  display: flex;
+  justify-content: space-between;
+  padding-inline: 41px 5px;
+  font-size: .75rem;
+}
+
+@media (min-width: 56rem) {
+  main {
+    grid-template-columns: minmax(0, 13fr) minmax(0, 7fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "connection rocket" "telemetry rocket";
+  }
+  .connection { grid-area: connection; }
+  .telemetry { grid-area: telemetry; }
+  .sensor-panel { grid-template-columns: min(41%, 17rem) minmax(0, 1fr); }
+  #rocket-view {
+    grid-area: rocket;
+    position: sticky;
+    top: 8px;
+    height: calc(100dvh - 16px);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "rocket-info" "stage";
+  }
+  .rocket-stage { min-height: 0; }
+}

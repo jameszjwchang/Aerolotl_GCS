@@ -1,0 +1,260 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* AerolotlSenderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* AerolotlSenderApp.swift */; };
+		A10000000000000000000002 /* SenderConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* SenderConnection.swift */; };
+		A10000000000000000000003 /* TelemetrySender.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* TelemetrySender.swift */; };
+		A10000000000000000000004 /* TelemetryPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* TelemetryPacket.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000000000000000000001 /* AerolotlSenderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AerolotlSenderApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* SenderConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenderConnection.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* TelemetrySender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetrySender.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* TelemetryPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryPacket.swift; sourceTree = "<group>"; };
+		A20000000000000000000005 /* Aerolotl Sender.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = "Aerolotl Sender.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		A30000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A30000000000000000000002 /* AerolotlSender */,
+				A30000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A30000000000000000000002 /* AerolotlSender */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000001 /* AerolotlSenderApp.swift */,
+				A20000000000000000000002 /* SenderConnection.swift */,
+				A20000000000000000000003 /* TelemetrySender.swift */,
+				A20000000000000000000004 /* TelemetryPacket.swift */,
+			);
+			path = AerolotlSender;
+			sourceTree = "<group>";
+		};
+		A30000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000005 /* Aerolotl Sender.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A40000000000000000000001 /* Aerolotl Sender */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A70000000000000000000002 /* Build configuration list for PBXNativeTarget "Aerolotl Sender" */;
+			buildPhases = (
+				A50000000000000000000001 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Aerolotl Sender";
+			productName = "Aerolotl Sender";
+			productReference = A20000000000000000000005 /* Aerolotl Sender.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A40000000000000000000002 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2720;
+			};
+			buildConfigurationList = A70000000000000000000001 /* Build configuration list for PBXProject "AerolotlSender" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A30000000000000000000001;
+			productRefGroup = A30000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A40000000000000000000001 /* Aerolotl Sender */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A50000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* AerolotlSenderApp.swift in Sources */,
+				A10000000000000000000002 /* SenderConnection.swift in Sources */,
+				A10000000000000000000003 /* TelemetrySender.swift in Sources */,
+				A10000000000000000000004 /* TelemetryPacket.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A60000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = W98QTWY44A;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		A60000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEVELOPMENT_TEAM = W98QTWY44A;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		A60000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Aerolotl Sender";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Send your motion and barometer readings to the Aerolotl GCS on your local network.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Read motion, air pressure, and relative altitude for the Aerolotl GCS bench test.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.aerolotl.gcs;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A60000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Aerolotl Sender";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Send your motion and barometer readings to the Aerolotl GCS on your local network.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Read motion, air pressure, and relative altitude for the Aerolotl GCS bench test.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.aerolotl.gcs;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A70000000000000000000001 /* Build configuration list for PBXProject "AerolotlSender" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A60000000000000000000001 /* Debug */,
+				A60000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A70000000000000000000002 /* Build configuration list for PBXNativeTarget "Aerolotl Sender" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A60000000000000000000003 /* Debug */,
+				A60000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A40000000000000000000002 /* Project object */;
+}

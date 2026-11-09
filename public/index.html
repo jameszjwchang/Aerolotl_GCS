@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aerolotl GCS</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="importmap">
+    {"imports":{"three":"/vendor/three/three.module.js","three/addons/":"/vendor/three-addons/"}}
+  </script>
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main>
+    <div class="connection">
+      <header>
+        <p><strong id="link-state" role="status">Connecting to receiver</strong> · <span id="last-seen">No data received</span></p>
+      </header>
+
+      <details id="setup">
+        <summary>Connect your iPhone</summary>
+        <p>Use same Wi-Fi on both devices and enter following address in Aerolotl Sender:</p>
+        <div id="sender-addresses"><p>Finding the receiver’s local address…</p></div>
+      </details>
+    </div>
+
+    <section id="rocket-view" aria-labelledby="rocket-title">
+      <div class="rocket-info">
+        <h2 id="rocket-title">Rocket view</h2>
+        <p class="rocket-live-state" role="status">Loading Saturn V…</p>
+        <div class="controls" role="group" aria-label="Rocket view controls">
+          <span>Acceleration (without gravity) <output class="rocket-magnitude" aria-live="off">…</output> m/s²</span>
+          <button type="button" class="rocket-zero" disabled>Zero position</button>
+        </div>
+      </div>
+      <div class="rocket-stage"></div>
+    </section>
+
+    <div class="telemetry">
+      <section aria-labelledby="motion-title">
+        <h2 id="motion-title">Motion</h2>
+        <div id="motion-panels"></div>
+      </section>
+
+      <section aria-labelledby="environment-title">
+        <h2 id="environment-title">Environment</h2>
+        <div id="environment-panels"></div>
+      </section>
+
+      <details class="stream-diagnostics">
+        <summary>Stream diagnostics</summary>
+        <dl class="diagnostics">
+          <div><dt>Unique readings</dt><dd id="sample-count">…</dd></div>
+          <div><dt>Latest packet interval</dt><dd id="batch-interval">…</dd></div>
+          <div><dt>Recent packet interval · p95</dt><dd id="batch-p95">…</dd></div>
+          <div><dt>Motion gaps · last 10 s</dt><dd id="motion-gaps">…</dd></div>
+        </dl>
+        <p id="stream-notes">Motion gaps are sample intervals over 25 ms. Packet timing measures arrivals at this computer.</p>
+      </details>
+    </div>
+  </main>
+
+  <template id="sensor-panel">
+    <article class="sensor-panel">
+      <div class="sensor-label">
+        <h3></h3>
+        <p><span class="sensor-note"></span> · <span class="sensor-rate"></span></p>
+        <div class="controls values"></div>
+      </div>
+      <div class="sensor-plot">
+        <div class="chart-wrap">
+          <canvas role="img"></canvas>
+        </div>
+        <div class="chart-time" aria-hidden="true"><span>−30 s</span><span>−20 s</span><span>−10 s</span><span>Now</span></div>
+      </div>
+    </article>
+  </template>
+</body>
+</html>
