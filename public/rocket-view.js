@@ -11,6 +11,7 @@ const setText = (element, text) => {
 export async function createRocketView(element) {
   const stage = element.querySelector('.rocket-stage');
   const state = element.querySelector('.rocket-live-state');
+  const accelerationLabel = element.querySelector('.rocket-acceleration-label');
   const magnitude = element.querySelector('.rocket-magnitude');
   const zero = element.querySelector('.rocket-zero');
   const motion = new RocketMotion();
@@ -26,7 +27,7 @@ export async function createRocketView(element) {
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.domElement.setAttribute('aria-label', '3D Saturn V rocket showing iPhone orientation and acceleration');
+  renderer.domElement.setAttribute('aria-label', '3D rocket showing orientation and acceleration');
   renderer.domElement.setAttribute('role', 'img');
   stage.prepend(renderer.domElement);
 
@@ -49,9 +50,12 @@ export async function createRocketView(element) {
 
     const rocket = new THREE.Group();
     scene.add(rocket);
-    const { scene: model } = await new GLTFLoader().loadAsync('/models/saturn-v.glb');
+    const { scene: model } = await new GLTFLoader().loadAsync('/models/rocket.gltf');
+    // The exported nose points along +Z. Align it with the viewer's +Y axis.
+    model.rotation.x = -Math.PI / 2;
     const bounds = new THREE.Box3().setFromObject(model);
-    const scale = 2.4 / bounds.getSize(new THREE.Vector3()).y;
+    const size = bounds.getSize(new THREE.Vector3());
+    const scale = 2.4 / Math.max(size.x, size.y, size.z);
     model.scale.multiplyScalar(scale);
     model.position.addScaledVector(bounds.getCenter(new THREE.Vector3()), -scale);
     rocket.add(model);
@@ -118,6 +122,8 @@ export async function createRocketView(element) {
 
         motion.accelerationInScene(acceleration);
         const accelerationMagnitude = acceleration.length();
+        setText(accelerationLabel, motion.acceleration?.accelerationKind === 'specific-force'
+          ? 'Specific force' : 'Acceleration (without gravity)');
         setText(magnitude, accelerationLive ? accelerationMagnitude.toFixed(2) : '…');
 
         const showArrow = accelerationLive && accelerationMagnitude >= 0.06;

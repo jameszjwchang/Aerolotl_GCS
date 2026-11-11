@@ -1,9 +1,9 @@
 const plotInset = 41;
-export const axisLines = [
-  { label: 'solid', dash: [], ink: '#111' },
-  { label: 'dashed', dash: [5, 3], ink: '#555' },
-  { label: 'dotted', dash: [1, 3], ink: '#888' },
-];
+export const axisColors = {
+  x: '#0069ad',
+  y: '#b84b00',
+  z: '#007c60',
+};
 
 export function plot(canvas, samples, { keys, offset, start, end, floor, gapMs }) {
   const w = canvas.clientWidth;
@@ -66,11 +66,10 @@ export function plot(canvas, samples, { keys, offset, start, end, floor, gapMs }
   ctx.beginPath();
   ctx.rect(left, 0, right - left + 1, h);
   ctx.clip();
-  keys.forEach((key, axis) => {
-    const { ink, dash } = axisLines[axis];
-    ctx.strokeStyle = ink;
-    ctx.fillStyle = ink;
-    ctx.setLineDash(dash);
+  keys.forEach(key => {
+    const color = axisColors[key] ?? '#111';
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
     ctx.lineWidth = 1.35;
     ctx.beginPath();
     let previous = null, lastPoint = null, inSegment = false;

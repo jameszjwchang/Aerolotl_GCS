@@ -18,8 +18,10 @@
       </header>
 
       <details id="setup">
-        <summary>Connect your iPhone</summary>
-        <p>Use same Wi-Fi on both devices and enter following address in Aerolotl Sender:</p>
+        <summary>Connect telemetry</summary>
+        <p>Flight computer · Send UDP packets through AirLift to this address on the same network.</p>
+        <div id="flight-addresses"><p>Finding the receiver’s local address…</p></div>
+        <p>iPhone bench test · Join the same Wi-Fi network and enter this address in Aerolotl Sender.</p>
         <div id="sender-addresses"><p>Finding the receiver’s local address…</p></div>
       </details>
     </div>
@@ -27,9 +29,9 @@
     <section id="rocket-view" aria-labelledby="rocket-title">
       <div class="rocket-info">
         <h2 id="rocket-title">Rocket view</h2>
-        <p class="rocket-live-state" role="status">Loading Saturn V…</p>
+        <p class="rocket-live-state" role="status">Loading rocket…</p>
         <div class="controls" role="group" aria-label="Rocket view controls">
-          <span>Acceleration (without gravity) <output class="rocket-magnitude" aria-live="off">…</output> m/s²</span>
+          <span><span class="rocket-acceleration-label">Acceleration (without gravity)</span> <output class="rocket-magnitude" aria-live="off">…</output> m/s²</span>
           <button type="button" class="rocket-zero" disabled>Zero position</button>
         </div>
       </div>

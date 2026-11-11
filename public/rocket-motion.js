@@ -3,8 +3,8 @@ import { Quaternion, Vector3 } from 'three';
 const vector = ({ x, y, z }) => new Vector3(x, y, z);
 const quaternion = ({ x, y, z, w }) => new Quaternion(x, y, z, w);
 
-function phoneToMotionReference(sample) {
-  // The motion packet maps reference axes to phone axes.
+function bodyToMotionReference(sample) {
+  // The motion packet maps reference axes to the sender's body axes.
   return quaternion(sample.attitude).invert();
 }
 
@@ -35,12 +35,12 @@ export class RocketMotion {
 
   updateOrientation(sample) {
     if (sample.attitude) {
-      const attitude = phoneToMotionReference(sample);
+      const attitude = bodyToMotionReference(sample);
       this.attitudeOrigin ??= attitude.clone().invert();
       this.orientation.copy(this.attitudeOrigin).multiply(attitude).normalize();
       return;
     }
-    // Older senders only provide angular velocity. Integrate in the phone's frame.
+    // Without an attitude quaternion, integrate angular velocity in the body frame.
     const dt = this.gyro ? (sample.measuredAtMs - this.gyro.measuredAtMs) / 1000 : 0;
     const { x, y, z } = sample.values;
     if (dt <= 0 || dt > 0.1 || ![x, y, z].every(Number.isFinite)) return;
@@ -53,7 +53,7 @@ export class RocketMotion {
   }
 
   zero() {
-    this.attitudeOrigin = this.gyro?.attitude ? phoneToMotionReference(this.gyro).invert() : null;
+    this.attitudeOrigin = this.gyro?.attitude ? bodyToMotionReference(this.gyro).invert() : null;
     this.orientation.identity();
   }
 

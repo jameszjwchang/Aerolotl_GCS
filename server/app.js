@@ -1,10 +1,11 @@
 import express from 'express';
+import { createSocket } from 'node:dgram';
 import { createServer } from 'node:http';
 import { networkInterfaces } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer, WebSocket } from 'ws';
 import { parseSensorLogger, InputError } from './sensor-logger.js';
-import { parseNativePacket } from './native-sender.js';
+import { MAX_FLIGHT_PACKET_BYTES, parseAerolotlPacket } from './aerolotl-packet.js';
 import { TelemetryStore } from '../public/telemetry.js';
 
 export function localAddresses(port) {
@@ -18,6 +19,7 @@ export function createGcs({ clock = Date.now } = {}) {
   const store = new TelemetryStore();
   const wss = new WebSocketServer({ noServer: true });
   const senders = new WebSocketServer({ noServer: true, maxPayload: 4096 });
+  const flightReceiver = createSocket('udp4');
   app.disable('x-powered-by');
   app.use(express.json({ limit: '4mb' }));
   app.get('/api/config', (_req, res) => {
@@ -25,6 +27,7 @@ export function createGcs({ clock = Date.now } = {}) {
     const addresses = localAddresses(port);
     res.json({ dashboardUrl: `http://localhost:${port}`,
       senderUrls: addresses.map(url => url.replace('http:', 'ws:') + '/ws/ingest'),
+      flightTargets: addresses.map(url => new URL(url).host),
       pushUrls: addresses.map(url => `${url}/api/telemetry`) });
   });
   app.get('/api/status', (_req, res) => res.json(store.status(clock())));
@@ -42,12 +45,23 @@ export function createGcs({ clock = Date.now } = {}) {
     }
     return result;
   };
+  flightReceiver.on('message', data => {
+    if (data.length > MAX_FLIGHT_PACKET_BYTES) return;
+    const now = clock();
+    let batch;
+    try {
+      batch = parseAerolotlPacket(JSON.parse(data.toString()), now);
+    } catch {
+      return;
+    }
+    ingest(batch, now);
+  });
   app.post('/api/telemetry', (req, res, next) => {
     try {
       const now = clock();
       const batch = parseSensorLogger(req.body, now);
       const result = ingest(batch, now);
-      if (result.conflict) return res.status(409).json({ error: 'Another phone is streaming. Stop it and wait two seconds.' });
+      if (result.conflict) return res.status(409).json({ error: 'Another sender is streaming. Stop it and wait two seconds.' });
       res.json({ ok: true, accepted: result.samples.length, invalid: batch.invalid,
         unsupported: batch.unsupported, ignored: result.ignored, duplicateBatch: result.duplicateBatch });
     } catch (error) { next(error); }
@@ -77,7 +91,7 @@ export function createGcs({ clock = Date.now } = {}) {
       let batch;
       try {
         if (isBinary) throw new Error('Expected JSON text.');
-        batch = parseNativePacket(JSON.parse(data.toString()), now);
+        batch = parseAerolotlPacket(JSON.parse(data.toString()), now);
       } catch {
         client.close(1007, 'Invalid Aerolotl telemetry packet.');
         return;
@@ -87,8 +101,16 @@ export function createGcs({ clock = Date.now } = {}) {
         return;
       }
       const result = ingest(batch, now);
+      if (result.ignored === 'timebase-changed') {
+        client.close(1008, 'Use one timestamp format per session.');
+        return;
+      }
+      if (result.ignored === 'acceleration-kind-changed') {
+        client.close(1008, 'Use one acceleration kind per session.');
+        return;
+      }
       if (result.conflict || result.ignored === 'retired-session') {
-        client.close(1008, result.conflict ? 'Another phone is streaming. Stop it and try again.' : 'This session has ended.');
+        client.close(1008, result.conflict ? 'Another sender is streaming. Stop it and try again.' : 'This session has ended.');
         return;
       }
       if (!session) {
@@ -102,13 +124,18 @@ export function createGcs({ clock = Date.now } = {}) {
     for (const client of wss.clients) send(client, message);
   }, 1000);
   timer.unref();
-  return { app, server, store, wss, close: async () => {
+  return { app, server, store, wss, flightReceiver, close: async () => {
     clearInterval(timer);
     for (const client of wss.clients) client.terminate();
     for (const client of senders.clients) client.terminate();
     wss.close();
     senders.close();
-    server.closeAllConnections();
-    if (server.listening) await new Promise(resolve => server.close(resolve));
+    await Promise.all([
+      new Promise(resolve => flightReceiver.close(resolve)),
+      server.listening && new Promise(resolve => {
+        server.close(resolve);
+        server.closeAllConnections();
+      }),
+    ]);
   } };
 }

@@ -61,6 +61,7 @@ export class TelemetryStore {
     this.messageIds = new Set();
     this.lastReceivedAtMs = null;
     this.lastBatchAtMs = null;
+    this.accelerationKind = undefined;
     this.intervals = [];
     this.totals = { batches: 0, accepted: 0, duplicates: 0, expired: 0, invalid: 0, unsupported: 0 };
   }
@@ -69,6 +70,11 @@ export class TelemetryStore {
     const key = JSON.stringify([batch.sourceId, batch.sessionId]);
     if (this.retired.has(key)) return { samples: [], ignored: 'retired-session' };
     const changed = batch.sourceId !== this.sourceId || batch.sessionId !== this.sessionId;
+    if (!changed && batch.timebase !== this.timebase) return { samples: [], ignored: 'timebase-changed' };
+    const accelerationKind = batch.samples.find(sample => sample.sensor === 'acceleration')?.accelerationKind;
+    if (!changed && this.accelerationKind && accelerationKind && this.accelerationKind !== accelerationKind) {
+      return { samples: [], ignored: 'acceleration-kind-changed' };
+    }
     if (changed && this.sourceId && batch.sourceId !== this.sourceId &&
       now - this.lastReceivedAtMs < 2000) return { samples: [], conflict: true };
     // Unsupported/invalid-only pushes never claim the source or reset a session.
@@ -79,6 +85,7 @@ export class TelemetryStore {
       this.reset();
       this.sourceId = batch.sourceId;
       this.sessionId = batch.sessionId;
+      this.timebase = batch.timebase;
     }
     if (batch.messageId !== undefined && this.messageIds.has(batch.messageId)) {
       return { samples: [], duplicateBatch: true };
@@ -87,6 +94,7 @@ export class TelemetryStore {
       this.messageIds.add(batch.messageId);
       if (this.messageIds.size > 10000) this.messageIds.delete(this.messageIds.values().next().value);
     }
+    this.accelerationKind ??= accelerationKind;
     this.totals.batches++;
     this.totals.invalid += batch.invalid;
     this.totals.unsupported += batch.unsupported;

@@ -1,6 +1,6 @@
 import { History, HISTORY_MS, SENSOR_IDS } from './telemetry.js';
 import { openStream } from './stream.js';
-import { axisLines, plot } from './chart.js';
+import { axisColors, plot } from './chart.js';
 
 const $ = id => document.getElementById(id);
 const awaitingData = '…';
@@ -20,17 +20,18 @@ let rocketView;
 for (const [sensor, config] of Object.entries(definitions)) {
   const panel = $('sensor-panel').content.firstElementChild.cloneNode(true);
   panel.querySelector('h3').textContent = config.title;
-  panel.querySelector('.sensor-note').textContent = config.note;
+  const note = panel.querySelector('.sensor-note');
+  note.textContent = config.note;
   const canvas = panel.querySelector('canvas');
   canvas.setAttribute('aria-label', config.title + ', last 30 seconds');
   const values = panel.querySelector('.values');
-  const outputs = config.keys.map((key, i) => {
+  const outputs = config.keys.map(key => {
     const div = document.createElement('div');
     div.className = 'readout';
     const label = document.createElement('span');
-    const description = key === 'value' ? (sensor === 'pressure' ? 'hPa' : 'm')
-      : key.toUpperCase() + ' (' + axisLines[i].label + ')';
+    const description = key === 'value' ? (sensor === 'pressure' ? 'hPa' : 'm') : key.toUpperCase();
     label.textContent = description + ' ';
+    if (key !== 'value') label.style.color = axisColors[key];
     const output = document.createElement('output');
     output.setAttribute('aria-label', config.title + (key === 'value' ? '' : ' ' + key.toUpperCase()));
     output.setAttribute('aria-live', 'off');
@@ -53,7 +54,7 @@ for (const [sensor, config] of Object.entries(definitions)) {
     values.append(zero);
   }
   $(config.keys.length === 3 ? 'motion-panels' : 'environment-panels').append(panel);
-  panels[sensor] = { config, panel, canvas, outputs, zero, rate: panel.querySelector('.sensor-rate'), history: new History() };
+  panels[sensor] = { config, panel, canvas, outputs, zero, note, rate: panel.querySelector('.sensor-rate'), history: new History() };
 }
 
 const setText = (node, value) => { if (node.textContent !== value) node.textContent = value; };
@@ -68,7 +69,7 @@ function showAddresses(container, urls) {
     const code = document.createElement('code');
     code.textContent = url;
     const copy = document.createElement('button');
-    copy.textContent = 'Copy URL';
+    copy.textContent = 'Copy address';
     copy.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(url);
@@ -78,9 +79,9 @@ function showAddresses(container, urls) {
         range.selectNodeContents(code);
         window.getSelection().removeAllRanges();
         window.getSelection().addRange(range);
-        copy.textContent = 'URL selected';
+        copy.textContent = 'Address selected';
       }
-      setTimeout(() => { copy.textContent = 'Copy URL'; }, 1500);
+      setTimeout(() => { copy.textContent = 'Copy address'; }, 1500);
     });
     row.append(code, copy);
     container.append(row);
@@ -92,9 +93,11 @@ async function loadAddresses() {
   try {
     const response = await fetch('/api/config');
     if (!response.ok) throw new Error('Receiver unavailable');
-    const { senderUrls } = await response.json();
+    const { flightTargets, senderUrls } = await response.json();
+    showAddresses($('flight-addresses'), flightTargets);
     showAddresses($('sender-addresses'), senderUrls);
   } catch {
+    $('flight-addresses').textContent = 'Could not read local addresses. Check the receiver terminal.';
     $('sender-addresses').textContent = 'Could not read local addresses. Check the receiver terminal.';
   }
 }
@@ -158,8 +161,8 @@ function render(frame) {
     const age = last == null ? null : Math.max(0, now - last);
     const live = age !== null && age < 2000 && connected;
     setText($('link-state'), !connected ? 'Receiver disconnected · retrying'
-      : age === null ? 'Waiting for iPhone' : !live ? 'Telemetry stale'
-        : 'Receiving iPhone telemetry');
+      : age === null ? 'Waiting for telemetry' : !live ? 'Telemetry stale'
+        : 'Receiving telemetry');
     setText($('last-seen'), age === null ? 'No data received' : 'Last reading received ' + ageText(age) + ' ago');
     setText($('sample-count'), status?.sessionId ? status.totals.accepted.toLocaleString() : awaitingData);
     setText($('batch-interval'), intervalText(status?.batchIntervalMs));
@@ -171,13 +174,16 @@ function render(frame) {
       + (overflow ? ' History capacity exceeded: ' + overflow.toLocaleString() + ' older readings removed.' : ''));
   }
   for (const [sensor, item] of Object.entries(panels)) {
-    const { history, panel, canvas, outputs, rate, config, zero } = item;
+    const { history, panel, canvas, outputs, rate, config, zero, note } = item;
     history.prune(now);
     const latest = history.latest;
     const state = !latest ? 'waiting' : !connected || now - latest.receivedAtMs >= 2000 ? 'stale' : 'live';
     const offset = sensor === 'altitude' ? altitudeOffset : 0;
     if (updateReadout) {
       panel.dataset.state = state;
+      if (sensor === 'acceleration') {
+        setText(note, latest?.accelerationKind === 'specific-force' ? 'Specific force · m/s²' : config.note);
+      }
       const hz = status?.sensors[sensor].rateHz;
       setText(rate, state === 'waiting' ? 'No readings' : state === 'stale' ? 'Stale'
         : Number.isFinite(hz) ? hz.toFixed(1) + ' Hz' : 'Sampling…');
