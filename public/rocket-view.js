@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RocketMotion } from './rocket-motion.js';
+import { createReferenceAxes } from './rocket-axes.js';
 
 const fresh = (sample, now) => !!sample && now - sample.receivedAtMs < 2000;
 const setText = (element, text) => {
@@ -34,11 +35,14 @@ export async function createRocketView(element) {
   try {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(39, 1, 0.05, 60);
-    camera.position.set(2.9, 1.8, 5.6);
+    // View along -X so the positive reference X axis points out of the screen.
+    camera.position.set(Math.hypot(2.9, 1.8, 5.6), 0, 0);
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false;
     controls.minDistance = 2.5;
     controls.maxDistance = 16;
+    controls.update();
+    controls.saveState();
     controls.addEventListener('change', () => { renderNeeded = true; });
     scene.add(new THREE.HemisphereLight(0xffffff, 0x777777, 1.15));
     const key = new THREE.DirectionalLight(0xffffff, 1.8);
@@ -59,6 +63,7 @@ export async function createRocketView(element) {
     model.scale.multiplyScalar(scale);
     model.position.addScaledVector(bounds.getCenter(new THREE.Vector3()), -scale);
     rocket.add(model);
+    const axes = createReferenceAxes(stage);
 
     const acceleration = new THREE.Vector3();
     const direction = new THREE.Vector3(0, 1, 0);
@@ -91,8 +96,10 @@ export async function createRocketView(element) {
 
     zero.addEventListener('click', () => {
       motion.zero();
+      controls.reset();
       renderNeeded = true;
     });
+    zero.disabled = false;
 
     return {
       ingest(message) {
@@ -116,7 +123,6 @@ export async function createRocketView(element) {
         if (!visible) return;
         const orientationLive = connected && fresh(motion.gyro, now);
         const accelerationLive = connected && fresh(motion.acceleration, now);
-        zero.disabled = !orientationLive;
         setText(state, orientationLive ? (motion.gyro.attitude ? 'Live orientation' : 'Live gyro · may drift')
           : motion.gyro ? 'Motion stream paused' : 'Waiting for motion');
 
@@ -136,6 +142,7 @@ export async function createRocketView(element) {
           arrow.setLength(length, Math.min(0.28, length * 0.45), Math.min(0.17, length * 0.27));
         }
         controls.update();
+        axes.update(camera);
         renderer.render(scene, camera);
         renderNeeded = false;
       },
