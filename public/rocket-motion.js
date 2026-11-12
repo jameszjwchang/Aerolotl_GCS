@@ -1,11 +1,13 @@
 import { Quaternion, Vector3 } from 'three';
 
-const vector = ({ x, y, z }) => new Vector3(x, y, z);
-const quaternion = ({ x, y, z, w }) => new Quaternion(x, y, z, w);
+// Right-handed input-to-viewer basis: +Z -> +X, +Y -> +Y, +X -> -Z.
+// A quaternion's vector part changes basis in the same way as a sensor vector.
+const toViewerVector = ({ x, y, z }, out = new Vector3()) => out.set(z, y, -x);
+const toViewerQuaternion = ({ x, y, z, w }) => new Quaternion(z, y, -x, w);
 
 function bodyToMotionReference(sample) {
   // The motion packet maps reference axes to the sender's body axes.
-  return quaternion(sample.attitude).invert();
+  return toViewerQuaternion(sample.attitude).invert();
 }
 
 export class RocketMotion {
@@ -44,7 +46,7 @@ export class RocketMotion {
     const dt = this.gyro ? (sample.measuredAtMs - this.gyro.measuredAtMs) / 1000 : 0;
     const { x, y, z } = sample.values;
     if (dt <= 0 || dt > 0.1 || ![x, y, z].every(Number.isFinite)) return;
-    const axis = vector(sample.values);
+    const axis = toViewerVector(sample.values);
     const rate = axis.length();
     if (rate > 0) {
       const step = new Quaternion().setFromAxisAngle(axis.divideScalar(rate), rate * dt);
@@ -60,6 +62,6 @@ export class RocketMotion {
   accelerationInScene(out) {
     const value = this.acceleration?.values;
     if (!value || ![value.x, value.y, value.z].every(Number.isFinite)) return out.set(0, 0, 0);
-    return out.set(value.x, value.y, value.z).applyQuaternion(this.orientation);
+    return toViewerVector(value, out).applyQuaternion(this.orientation);
   }
 }

@@ -9,7 +9,9 @@ On the Mac, run `npm ci` and `npm start`, then open `http://localhost:3000`. The
 
 Both inputs feed the same decoder, graphs, and rocket view. To switch senders, stop the active stream, wait two seconds, then start the other sender with a fresh session ID. The dashboard resets its history and pose for the new session.
 
-The rocket view's reference axes stay fixed as telemetry rotates the rocket and follow your view when you drag. Their colors match the X/Y/Z graph traces. A circled dot means an axis points toward you; a circled cross means it points away. **Zero position** zeroes the rocket pose and resets the view with +X pointing out of the screen, +Y up, and +Z left. It also resets a dragged view when no sender is connected.
+The rocket view's reference axes stay fixed as telemetry rotates the rocket and follow your view when you drag. A circled dot means an axis points toward you; a circled cross means it points away. **Zero position** zeroes the rocket pose and resets the view with +X pointing out of the screen, +Y up, and +Z left. It also resets a dragged view when no sender is connected.
+
+The viewer maps incoming motion axes `(x, y, z)` to `(z, y, -x)`: iPhone +Z becomes visual +X, +Y stays +Y, and +X becomes visual −Z. This conversion applies to attitude, gyro integration, and the acceleration arrow. Graphs and numeric readings retain the incoming sensor axes.
 
 ## Telemetry packet v1
 
